@@ -2,11 +2,11 @@
 Matrix,SceneNode,Wall,Door,Roof,Window,requestAnimationFrame*/
 
 function onLoad() {
-    var mainCanvas, mainContext, houses, rootScene, lastTime, i;
-
-    houses = [];
+    var mainCanvas, mainContext, rootScene, lastTime, i;
 
     function initialiseCanvasContext() {
+        var house;
+
         mainCanvas = document.getElementById('mainCanvas');
         if (!mainCanvas) {
             // make a message box pop up with the error.
@@ -22,12 +22,12 @@ function onLoad() {
 
         rootScene = new SceneNode(Matrix.createIdentity());
 
-        for (i = 0; i < 20; i += 1) {
-            houses.push(new House(new Vector(50, 50)));
-            houses[i].setScale((i / 2) / 20);
-            houses[i].setRotation(i);
+        for (i = 0; i < 10; i += 1) {
+            house = new House(new Vector(0, 0));
+            house.setScale(i / 80); // Starting point of the typhoon
+            house.setRotation(i);
 
-            rootScene.pushChild(houses[i]);
+            rootScene.pushChild(house);
         }
     }
 
@@ -35,16 +35,12 @@ function onLoad() {
         rootScene.update(deltaTime);
     }
 
-    function draw(pDeltaTime) {
+    function draw() {
         mainContext.fillStyle = "#0000ff";
         rootScene.draw(mainContext,
             Matrix.createTranslation(
                 new Vector(mainCanvas.width / 2, mainCanvas.height / 2)
             ));
-
-        Matrix.createScale(
-            new Vector(1 + pDeltaTime, 1 + pDeltaTime)
-        ).transform(mainContext);
     }
 
     function gameLoop() {
@@ -53,7 +49,7 @@ function onLoad() {
         deltaTime = thisTime - lastTime;
         deltaTime /= 1000;
         update(deltaTime);
-        draw(deltaTime);
+        draw();
         lastTime = Date.now();
         requestAnimationFrame(gameLoop);
     }

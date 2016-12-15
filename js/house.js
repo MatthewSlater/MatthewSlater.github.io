@@ -60,8 +60,10 @@ var House = (function () {
     House.prototype.update = function (deltaTime) {
         var translateMatrix;
 
-        this.mRotation += deltaTime * 50;
-        this.mScale += deltaTime / 10;
+        this.mRotation += deltaTime * 17; // Speed of cycles
+        this.mScale += deltaTime / 8; // Speed of growth
+        this.mPosition = (new Vector(this.mRotation * this.mScale, 0)
+            .multiply(deltaTime)).add(this.getPosition());
 
         // Rotate
         translateMatrix = Matrix.createRotation(this.mRotation);
@@ -71,9 +73,15 @@ var House = (function () {
         );
         //Translate
         translateMatrix = translateMatrix.multiply(
-            Matrix.createTranslation((new Vector(this.mRotation * this.mScale, 0)
-            .multiply(deltaTime)).add(this.getPosition()))
+            Matrix.createTranslation(this.getPosition())
         );
+
+        // When a house leaves the screen make it draw from the bottom
+        if (this.mPosition.getX() > 400) {
+            this.setPosition(new Vector(0, 0));
+            this.setRotation(0);
+            this.setScale(0);
+        }
 
         this.mSceneGraph.setMatrix(translateMatrix); // Set changes
     };
